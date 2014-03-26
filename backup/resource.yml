@@ -1,0 +1,41 @@
+---
+small:
+  - 1
+  - 4
+  - 50
+  - jobs:
+    - debian_nfs_server
+    - syslog_aggregator
+    - collector
+    - ccdb
+    - uaa
+    - uaadb
+    - vcap_redis
+    - login
+    - health_manager
+    - health_monitor
+    - dashboard
+    - cloud_controller
+    - opentsdb
+    - zkp
+    - nats
+    - hbase_master
+    - hbase_slave
+middle:
+  - 2
+  - 4
+  - 50
+  - jobs:
+    - router
+large:
+  - 4
+  - 8
+  - 50
+  - jobs:
+    - router
+    - dea
+    - ESBgateway
+    - ESBnats
+    - ESB
+    - WSO2
+    - LB

@@ -1,0 +1,5 @@
+check process cloud_agent
+  with pidfile /var/vcap/sys/run/cloud_agent/cloud_agent.pid
+  start program "sudo /var/vcap/jobs/cloud_agent/bin/cloud_agent_ctl start"
+  stop program "sudo /var/vcap/jobs/cloud_agent/bin/cloud_agent_ctl stop"
+  group bosh

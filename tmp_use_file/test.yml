@@ -1,0 +1,413 @@
+---
+jobs:
+- name: vcap_redis
+  template:
+  - vcap_redis
+- name: vblob_node
+  template:
+  - vblob_node_ng
+- name: vblob_gateway
+  template:
+  - vblob_gateway
+- name: uaadb
+  template:
+  - postgres
+- name: uaa
+  template:
+  - uaa
+- name: syslog_aggregator
+  template:
+  - syslog_aggregator
+- name: stager
+  template:
+  - stager
+- name: services_redis
+  template:
+  - vcap_redis
+- name: services_nfs
+  template:
+  - debian_nfs_server
+- name: service_utilities
+  template:
+  - service_utilities
+- name: serialization_data_server
+  template:
+  - serialization_data_server
+- name: router
+  template:
+  - router
+- name: redis_node
+  template:
+  - redis_node_ng
+- name: redis_gateway
+  template:
+  - redis_gateway
+- name: rabbit_node
+  template:
+  - rabbit_node_ng
+- name: rabbit_gateway
+  template:
+  - rabbit_gateway
+- name: postgresql_node
+  template:
+  - postgresql_node_ng
+- name: postgresql_gateway
+  template:
+  - postgresql_gateway
+- name: opentsdb
+  template:
+  - opentsdb
+- name: nats
+  template:
+  - nats
+- name: mysql_node
+  template:
+  - mysql_node
+- name: mysql_gateway
+  template:
+  - mysql_gateway
+- name: mongodb_node
+  template:
+  - mongodb_node_ng
+- name: mongodb_gateway
+  template:
+  - mongodb_gateway
+- name: login
+  template:
+  - login
+- name: health_manager
+  template:
+  - health_manager_next
+- name: hbase_slave
+  template:
+  - hbase_slave
+- name: hbase_master
+  template:
+  - hbase_master
+- name: debian_nfs_server
+  template:
+  - debian_nfs_server
+- name: dea
+  template:
+  - dea
+- name: dashboard
+  template:
+  - dashboard
+- name: collector
+  template:
+  - collector
+- name: cloud_controller
+  template:
+  - cloud_controller
+- name: ccdb
+  template:
+  - ccdb_postgres
+- name: backup_manager
+  template:
+  - backup_manager
+properties:
+  domain: cf.local
+  networks:
+    apps: default
+    management: default
+  nats:
+    user: nats
+    password: nats
+    address: 10.10.102.153
+    port: 4222
+  ccdb:
+    address: 10.10.102.159
+    port: 5524
+    pool_size: 10
+    roles:
+    - tag: admin
+      name: ccadmin
+      password: tauBauWauZZb2
+    databases:
+    - tag: cc
+      name: appcloud
+  uaadb:
+    address: 10.10.102.160
+    port: 2544
+    roles:
+    - tag: admin
+      name: root
+      password: 33139c8e3f34bc201351ba7a
+    databases:
+    - tag: uaa
+      name: uaa
+  cc:
+    srv_api_uri: http://api.cf.local
+    password: zbTuuLaap44jadlas2l312lk
+    token: 267f4eaa8c1758f66d5cb7adcb24adb9d7
+    use_nginx: true
+    new_stager_percent: 100
+    new_stager_email_regexp: .*@zju.edu.cn
+    staging_upload_user: zxsfhgjg
+    staging_upload_password: ZNVfdase9
+    allow_registration: true
+    uaa:
+      enabled: true
+      resource_id: cloud_controller
+      token_creation_email_filter:
+      - ''
+    admins:
+    - admin@zju.edu.cn
+    - zjuvlis@zju.edu.cn
+  vcap_redis:
+    address: 10.10.102.161
+    port: 5454
+    password: PoIxbL98RWpwBuUJvKNojnpIcRb1ot2
+    maxmemory: 20000000
+  router:
+    status:
+      port: 8080
+      user: sBNUxXlS0pc71wVef
+      password: 7nTmaIf9vPV4mJyBe
+  dashboard:
+    uaa:
+      client_id: dashboard
+      client_secret: YsLuKyUCZF53kBKS
+    users:
+    - - b29
+      - admin
+  dea:
+    max_memory: 4096
+  nfs_server:
+    address: 10.10.101.159
+    network: 192.168.1.0/24
+  hbase_master:
+    address: 10.10.102.155
+    hbase_master:
+      port: 60000
+      webui_port: 60010
+      heap_size: 1024
+    hbase_zookeeper:
+      heap_size: 1024
+    hadoop_namenode:
+      port: 9000
+  opentsdb:
+    address: 10.10.102.156
+    port: 4242
+  hbase_slave:
+    hbase_regionserver:
+      port: 60020
+      heap_size: 1024
+    addresses:
+    - 10.10.101.155
+  plan: '100'
+  service_plans:
+    mysql:
+      '100':
+        description: Shared server, shared VM, 1MB memory, 10MB storage, 10 connections
+        free: true
+        job_management:
+          high_water: 8
+          low_water: 2
+        configuration:
+          capacity: 10
+          max_db_size: 10
+          key_buffer: 512
+          innodb_buffer_pool_size: 512
+          max_allowed_packet: 16
+          thread_cache_size: 128
+          query_cache_size: 128
+          max_long_query: 3
+          max_long_tx: 30
+          max_clients: 10
+          max_connections: 40
+          table_open_cache: 80
+          innodb_tables_per_database: 50
+          connection_pool_size:
+            min: 5
+            max: 10
+          warden:
+            enable: false
+    postgresql:
+      '100':
+        description: Shared server, shared VM, 1MB memory, 10MB storage, 10 connections
+        free: true
+        job_management:
+          high_water: 8
+          low_water: 2
+        configuration:
+          capacity: 10
+          max_db_size: 10
+          max_long_query: 3
+          max_long_tx: 10
+          max_clients: 10
+          max_connections: 40
+          shared_buffers: 312
+          effective_cache_size: 1115
+          shmmax: 371195904
+          checkpoint_segments: 3
+          checkpoint_segments_max: 3
+          maintenance_work_mem: 30
+          warden:
+            enable: false
+    mongodb:
+      '100':
+        description: Dedicated server, shared VM, 250MB storage, 10 connections
+        free: true
+        job_management:
+          high_water: 8
+          low_water: 2
+        configuration:
+          capacity: 10
+          max_clients: 10
+          quota_files: 4
+          quota_data_size: 240
+          enable_journaling: true
+    redis:
+      '100':
+        description: Dedicated server, shared VM, 20MB memory, 50 connections
+        free: true
+        job_management:
+          high_water: 8
+          low_water: 2
+        configuration:
+          capacity: 10
+          max_memory: 20
+          memory_overhead: 5
+          max_clients: 50
+          persistent: true
+    rabbit:
+      '100':
+        description: Dedicated server, shared VM, 1MB messages/day, 10 connections
+        free: true
+        job_management:
+          high_water: 8
+          low_water: 2
+        configuration:
+          capacity: 10
+          max_disk: 10
+          max_clients: 10
+          vm_memory_high_watermark: 0.0308
+          free_disk_low_water: 0.01832
+          bandwidth_quotas:
+            per_day: 1
+            per_second: 0.01
+          filesystem_quota: true
+  serialization_data_server:
+    upload_token: 8f7COGvTlXT7l8IzAgOHxMXurBrG364k
+    use_nginx: true
+    upload_timeout: 10
+    port: 8080
+    upload_file_expire_time: 600
+    purge_expired_interval: 30
+  service_backup:
+    nfs_server:
+      address: 172.17.4.139
+      export_dir: /var/vcap/store/shared
+  service_migration:
+    nfs_server:
+      address: 172.17.4.139
+      export_dir: /var/vcap/store/shared
+  service_backup_manager:
+    enable: true
+  service_snapshot_manager:
+    enable: true
+  service_job_manager:
+    enable: true
+  mysql_gateway:
+    token: d8d7b640fea0666c28eaa93eccdc275e649b6d27
+    default_plan: '100'
+    supported_versions:
+    - '5.1'
+    version_aliases:
+      current: '5.1'
+  mysql_node:
+    production: true
+    supported_versions:
+    - '5.1'
+    default_version: '5.1'
+    password: zb213djkas
+  redis_gateway:
+    token: 401e721c8cba8c51d8bd4ca1b4e6597e7a527b40
+    default_plan: '100'
+    supported_versions:
+    - '2.6'
+    version_aliases:
+      current: '2.6'
+  redis_node:
+    command_rename_prefix: foobar
+    supported_versions:
+    - '2.6'
+    default_version: '2.6'
+  mongodb_gateway:
+    token: 2a8fb923bc4c22750856914eea810607a221fead
+    default_plan: '100'
+    supported_versions:
+    - '2.2'
+    version_aliases:
+      current: '2.2'
+  mongodb_node:
+    supported_versions:
+    - '2.2'
+    default_version: '2.2'
+  rabbit_gateway:
+    token: A00430A8BAED490B1240338DA34B10D
+    default_plan: '100'
+    supported_versions:
+    - '2.8'
+    version_aliases:
+      current: '2.8'
+  rabbit_node:
+    supported_versions:
+    - '2.8'
+    default_version: '2.8'
+  postgresql_gateway:
+    token: cqZeAh4BXFBXwLrrWJCpQTfeDnaCn7m
+    default_plan: '100'
+    supported_versions:
+    - '9.1'
+    version_aliases:
+      current: '9.1'
+  postgresql_node:
+    password: 13ec900a8cb24f09413cf1c1b3eb6eca
+    supported_versions:
+    - '9.1'
+    default_version: '9.1'
+  syslog_aggregator:
+    address: 10.10.102.152
+    port: 54321
+  stager:
+    max_staging_duration: 120
+    max_active_tasks: 20
+    queues:
+    - staging
+  login:
+    links:
+      home: https://portal.cf.local
+      passwd: https://portal.cf.local/password_resets/new
+      signup: https://portal.cf.local/register
+  uaa:
+    catalina_opts: -Xmx768m -XX:MaxPermSize=256m
+    url: http://uaa.cf.local
+    resource_id: account_manager
+    client_secret: somesecret
+    token_secret: tokensecret
+    cc:
+      token_secret: WGvbxaiC371JM
+      client_secret: fOZF5DMNDZIfCb9A
+    admin:
+      client_secret: MeM5fER8evgEisjj
+    login:
+      client_secret: HZtd2FyZS5jb20iL
+    batch:
+      username: do0H2AKay2jAc
+      password: FSCTiplI5Q83n
+    client:
+      override: true
+      autoapprove:
+      - vmc
+      - login
+    clients:
+      dashboard:
+        secret: YsLuKyUCZF53kBKS
+        scope: openid,dashboard.user
+        authorities: uaa.admin,uaa.resource,tokens.read,scim.read,scim.write
+        authorized-grant-types: client_credentials,authorization_code,refresh_token
+    scim:
+      users:
+      - b29|admin|openid,dashboard.user

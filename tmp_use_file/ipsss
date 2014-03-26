@@ -1,0 +1,41 @@
+10.10.102.150   debian_nfs_server	0
+10.10.102.151	services_nfs		0
+10.10.102.152	syslog_aggregator	0
+10.10.102.153	nats			0
+10.10.102.154	hbase_slave		0
+10.10.102.155	hbase_master		0
+10.10.102.156	opentsdb		0
+10.10.102.157	collector		0
+10.10.102.158	dashboard		0
+10.10.102.159	ccdb			0
+10.10.102.160	uaadb			0
+10.10.102.161	vcap_redis		0
+10.10.102.162   stager			0	
+10.10.102.163	uaa			0
+10.10.102.164	login			0
+10.10.102.165	cloud_controller	0
+10.10.102.166	router			0
+10.10.102.167	router			1
+10.10.102.168	health_manager		0
+10.10.102.169	dea			0	
+10.10.102.170	dea			1
+10.10.102.171   mysql_gateway		0
+10.10.102.172	mysql_node		0
+
+
+#not necessary
+#10.10.102.173	mongodb_node	
+#10.10.102.174	redis_node		
+#10.10.102.175	rabbit_node		
+#10.10.102.176	postgresql_node	
+#10.10.102.177	service_utilitis
+#service_redis is not necessary
+#10.10.102.162	services_redis	
+#service_gateways maybe not necessary
+#10.10.102.171	service_gateways	
+
+#maybe necessary
+#stager
+#mysql_gateway
+#zkper
+#health_monitor

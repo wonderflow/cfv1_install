@@ -1,0 +1,15 @@
+base_dir: /var/vcap
+loglevel: DEBUG
+mbus: nats://nats:nats@10.10.101.130:4222
+heartbeat_interval: 30
+monit_credentials: /var/vcap/monit/monit.user
+monit_port: 2822
+
+zkp_url: 10.10.101.131:2181
+zkp_root_name: /cloudfoundry_servers
+
+job: changeme
+job_index: 0
+
+
+agent_id: e7d3a698-5c8c-4d73-b890-334e3022a8a1

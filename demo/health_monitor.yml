@@ -1,0 +1,58 @@
+---
+jobs:
+- name: health_monitor
+  template:
+  - health_monitor
+
+properties:
+  #TO BE modify 1
+  domain: cf.my
+
+  networks:
+    apps: default
+    management: default
+
+  nats:
+    user: nats
+    password: nats
+    #TO BE modify 2
+    address: 10.10.101.44
+    port: 4222
+
+  director:
+    address: 10.10.101.44 # TODO: this is a fake address!
+    port: 25555
+
+  hm:
+    http:
+      port: 25923
+      user: admin #can be whatever
+      password: admin # can be whatever
+    director_account:
+      user: admin # can be whatever
+      password: admin # can be whatever
+    intervals:
+      poll_director: 60
+      poll_grace_period: 30
+      log_stats: 300
+      analyze_agents: 60
+      agent_timeout: 180
+      rogue_agent_alert: 180
+    loglevel: info
+    email_notifications: false # if this is false you don't need to worry about the smtp section below
+    email_recipients:
+    - your-operations-team@your-company.com
+    smtp:
+      from: bhm@yourdomain
+      host: smtp.your.domain
+      port: 25
+      auth: plain
+      user: your-smtp-user
+      password: your-smtp-password
+      domain: localdomain
+    tsdb_enabled: true # it this is false you don't have to worry about the tsdb settings. Plus you can't set it to true until you have a complete Cloud Foundry running.
+    tsdb:
+      #TO BE modify 3
+      address: 10.10.101.42
+      port: 4242
+

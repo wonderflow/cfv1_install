@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Nise Bosh Set Up Configuration</title>
+		<script type="text/javascript" src="d3/d3.v3.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var body = d3.select("body");
+			var p = body.append("p");
+			p.text("Hello World!");
+
+			var dataset = [ 5, 10, 15, 20, 25 ];
+
+			var svg = body.append("svg");
+			svg.attr("width",1000).attr("height",1150);
+	var circles = svg.selectAll("circle")
+	.data(dataset)
+.enter()
+	.append("circle");
+	circles.attr("cx",25*(i+1))
+	.attr("cy",50)
+	.attr("r",20)
+	.attr("fill","rgba(255,0,0,0.1)");
+
+	// Your beautiful D3 code will go here
+	</script>
+</body>
+</html>  

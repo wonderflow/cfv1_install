@@ -1,0 +1,14 @@
+wonderflow-test
+*.gz
+*.tgz
+*.tmp
+tmp.*
+tmp
+adeploy
+log
+rubygems-1.8.17
+config/cfyml
+config/cloudagentyml
+shell/jobs
+*~
+blobs

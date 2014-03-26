@@ -1,0 +1,52 @@
+---
+jobs:
+- name: health_monitor
+  template:
+  - health_monitor
+properties:
+  domain:
+  - smartcity.com
+  networks:
+    apps: default
+    management: default
+  nats:
+    user: nats
+    password: nats
+    address:
+    - 10.255.134.149
+    port: 4222
+  director:
+    address: 10.10.101.44
+    port: 25555
+  hm:
+    http:
+      port: 25923
+      user: admin
+      password: admin
+    director_account:
+      user: admin
+      password: admin
+    intervals:
+      poll_director: 60
+      poll_grace_period: 30
+      log_stats: 300
+      analyze_agents: 60
+      agent_timeout: 180
+      rogue_agent_alert: 180
+    loglevel: info
+    email_notifications: false
+    email_recipients:
+    - your-operations-team@your-company.com
+    smtp:
+      from: bhm@yourdomain
+      host: smtp.your.domain
+      port: 25
+      auth: plain
+      user: your-smtp-user
+      password: your-smtp-password
+      domain: localdomain
+    tsdb_enabled: true
+    tsdb:
+      address:
+      - 10.255.134.147
+      port: 4242

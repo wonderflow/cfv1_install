@@ -1,0 +1,7 @@
+
+#deb cdrom:[Ubuntu 10.04.4 LTS _Lucid Lynx_ - Release amd64 (20120214.2)]/ lucid main restricted
+# See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
+# newer versions of the distribution.
+
+deb http://10.255.134.168/ubuntu /
+

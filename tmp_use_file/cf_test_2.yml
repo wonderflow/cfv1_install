@@ -1,0 +1,686 @@
+---
+
+name: cf.test2
+director_uuid: a4e20e53-9db4-48e5-8690-3f239092745e
+
+releases:
+- name: appcloud
+  version: 128.1-dev
+
+compilation:
+  workers: 4
+  network: default
+  cloud_properties:
+    ram: 2048
+    disk: 8096
+    cpu: 4
+
+update:
+  canaries: 3
+  canary_watch_time: 3000-90000
+  update_watch_time: 3000-90000
+  max_in_flight: 4
+  max_errors: 1
+
+networks:
+
+- name: default
+  subnets:
+  - range: 10.10.102.0/24
+    reserved:
+    static:
+    - 10.10.102.150 - 10.10.102.200
+    gateway: 10.10.102.254
+    dns:
+    - 10.10.103.123
+    cloud_properties:
+      name: VM Network
+
+resource_pools:
+
+- name: infrastructure
+  network: default
+  size: 18
+  stemcell:
+    name: bosh-stemcell
+    version: 0.6.7
+  cloud_properties:
+    ram: 2048
+    disk: 8192
+    cpu: 1
+  env:
+    bosh:
+      # password generated using mkpasswd -m sha-512
+      password: $6$Q3ZjhAX49hoC$//mQgttYAGxmHn5UZEx9gB0QjeNTBQuTToE/60W3/D2ROXP.zF94MVhiAjPH1mM7ahcNNFQi8lqN5wAWcC6mC0
+
+- name: dea
+  network: default
+  size: 2
+  stemcell:
+    name: bosh-stemcell
+    version: 0.6.7
+  cloud_properties:
+    ram: 8192
+    disk: 16384
+    cpu: 2
+  env:
+    bosh:
+      # password generated using mkpasswd -m sha-512
+      password: $6$Q3ZjhAX49hoC$//mQgttYAGxmHn5UZEx9gB0QjeNTBQuTToE/60W3/D2ROXP.zF94MVhiAjPH1mM7ahcNNFQi8lqN5wAWcC6mC0
+
+- name: controller
+  network: default
+  size: 1
+  stemcell:
+    name: bosh-stemcell
+    version: 0.6.7
+  cloud_properties:
+    ram: 2048
+    disk: 16384
+    cpu: 2
+  env:
+    bosh:
+      # password generated using mkpasswd -m sha-512
+      password: $6$Q3ZjhAX49hoC$//mQgttYAGxmHn5UZEx9gB0QjeNTBQuTToE/60W3/D2ROXP.zF94MVhiAjPH1mM7ahcNNFQi8lqN5wAWcC6mC0
+
+- name: services_small
+  network: default
+  size: 7
+  stemcell:
+    name: bosh-stemcell
+    version: 0.6.7
+  cloud_properties:
+    ram: 2048
+    disk: 8192
+    cpu: 2
+  env:
+    bosh:
+      # password generated using mkpasswd -m sha-512
+      password: $6$Q3ZjhAX49hoC$//mQgttYAGxmHn5UZEx9gB0QjeNTBQuTToE/60W3/D2ROXP.zF94MVhiAjPH1mM7ahcNNFQi8lqN5wAWcC6mC0
+
+jobs:
+
+- name: debian_nfs_server
+  release: appcloud
+  template: debian_nfs_server
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 8192
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.150
+
+- name: services_nfs
+  release: appcloud
+  template: debian_nfs_server
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 10240
+  properties:
+    debian_nfs_server:
+      no_root_squash: true
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.151
+
+- name: syslog_aggregator
+  release: appcloud
+  template: syslog_aggregator
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 1024
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.152
+
+- name: nats
+  release: appcloud
+  template: nats
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.153
+
+- name: hbase_slave
+  release: appcloud
+  template: hbase_slave
+  instances: 1
+  resource_pool: services_small
+  persistent_disk: 2048
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.154
+
+- name: hbase_master
+  release: appcloud
+  template: hbase_master
+  instances: 1
+  resource_pool: services_small
+  persistent_disk: 2048
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.155
+
+- name: opentsdb
+  release: appcloud
+  template: opentsdb
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 4096
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.156
+
+- name: collector
+  release: appcloud
+  template: collector
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.157
+
+- name: dashboard
+  release: appcloud
+  template: dashboard
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.158
+
+- name: ccdb
+  release: appcloud
+  template: postgres
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 2048
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.159
+  properties:
+    db: ccdb
+
+- name: uaadb
+  release: appcloud
+  template: postgres
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 2048
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.160
+  properties:
+    db: uaadb
+
+- name: vcap_redis
+  release: appcloud
+  template: vcap_redis
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.161
+
+- name: services_redis
+  release: appcloud
+  template: vcap_redis
+  instances: 1
+  resource_pool: infrastructure
+  persistent_disk: 2048
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.162
+  properties:
+    vcap_redis:
+      port: 3456
+      password: bt3FXngo
+      maxmemory: 2000000000
+      persistence:
+        dir: /var/vcap/store/vcap_redis
+
+- name: uaa
+  release: appcloud
+  template: uaa
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.163
+
+- name: login
+  release: appcloud
+  template: login
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.164
+
+- name: cloud_controller
+  release: appcloud
+  template: cloud_controller
+  instances: 1
+  resource_pool: controller
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.165
+
+- name: router
+  release: appcloud
+  template: router
+  instances: 2
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.166
+    - 10.10.102.167
+
+- name: health_manager
+  release: appcloud
+  template: health_manager_next
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.168
+
+- name: stager_dea
+  release: appcloud
+  template:
+  - stager
+  - dea
+  instances: 2
+  resource_pool: dea
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.169
+    - 10.10.102.170
+
+- name: service_gateways
+  release: appcloud
+  template:
+  - mysql_gateway
+  - mongodb_gateway
+  - redis_gateway
+  - rabbit_gateway
+  - postgresql_gateway
+  resource_pool: infrastructure
+  instances: 1
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.171
+
+- name: mysql_node_100
+  release: appcloud
+  template: mysql_node
+  instances: 1
+  resource_pool: services_small 
+  persistent_disk: 1024
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.172
+
+- name: mongodb_node_100
+  release: appcloud
+  template: mongodb_node
+  instances: 1
+  resource_pool: services_small
+  persistent_disk: 8192
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.173
+
+- name: redis_node_100
+  release: appcloud
+  template: redis_node
+  instances: 1
+  resource_pool: services_small
+  persistent_disk: 1024
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.174
+
+- name: rabbit_node_100
+  release: appcloud
+  template: rabbit_node
+  instances: 1
+  resource_pool: services_small
+  persistent_disk: 4096
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.175
+
+- name: postgresql_node_100
+  release: appcloud
+  template: postgresql_node
+  instances: 1
+  resource_pool: services_small
+  persistent_disk: 1024
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.176
+
+- name: service_utilities
+  release: appcloud
+  template: service_utilities
+  instances: 1
+  resource_pool: infrastructure
+  networks:
+  - name: default
+    static_ips:
+    - 10.10.102.177
+
+properties:
+
+  domain: cf.test2
+
+  networks:
+    apps: default
+    management: default
+
+  nats:
+    user: nats
+    password: nats
+    address: 10.10.102.153
+    port: 4222
+
+  ccdb:
+    address: 10.10.102.159
+    port: 5524
+    pool_size: 10
+    roles:
+    - tag: admin
+      name: ccadmin
+      password: tauBauWauZZb2
+    databases:
+    - tag: cc
+      name: appcloud
+
+  uaadb:
+    address: 10.10.102.160
+    port: 2544
+    roles:
+    - tag: admin
+      name: root
+      password: 33139c8e3f34bc201351ba7a
+    databases:
+    - tag: uaa
+      name: uaa
+
+  cc:
+    srv_api_uri: http://api.cf.test2
+    password: zbTuuLaap44jadlas2l312lk
+    token: 267f4eaa8c1758f66d5cb7adcb24adb9d7
+    use_nginx: true
+    new_stager_percent: 100
+    new_stager_email_regexp: '.*@zju.edu.cn'
+    staging_upload_user: zxsfhgjg
+    staging_upload_password: ZNVfdase9
+    allow_registration: true
+    uaa:
+      enabled: true
+      resource_id: cloud_controller
+      token_creation_email_filter: [""]
+    admins:
+    - jiangqi902@zju.edu.cn
+    - 21151073@zju.edu.cn
+
+  vcap_redis:
+    address: 10.10.102.161
+    port: 5454
+    password: PoIxbL98RWpwBuUJvKNojnpIcRb1ot2
+    maxmemory: 20000000 # 200MB
+
+  router:
+    status:
+      port: 8080
+      user: sBNUxXlS0pc71wVef
+      password: 7nTmaIf9vPV4mJyBe
+
+  dashboard:
+    uaa:
+      client_id: dashboard
+      client_secret: YsLuKyUCZF53kBKS
+    users:
+      - [b29, admin]
+
+  dea:
+    max_memory: 4096
+
+  nfs_server:
+    address: 10.10.102.150
+    network: 10.10.102.0/24
+
+  hbase_master:
+    address: 10.10.102.155
+    hbase_master:
+      port: 60000
+      webui_port: 60010
+      heap_size: 1024
+    hbase_zookeeper:
+      heap_size: 1024
+    hadoop_namenode:
+      port: 9000
+
+  opentsdb:
+    address: 10.10.102.156
+    port: 4242
+
+  hbase_slave:
+    hbase_regionserver:
+      port: 60020
+      heap_size: 1024
+    addresses:
+    - 10.10.102.75
+
+  service_plans:
+    mysql:
+      free:
+        job_management:
+          high_water: 1400
+          low_water: 100
+        configuration:
+          allow_over_provisioning: true
+          capacity: 200
+          max_db_size: 128
+          max_long_query: 3
+          max_long_tx: 0
+          max_clients: 20
+    postgresql:
+      free:
+        job_management:
+          high_water: 1400
+          low_water: 100
+        configuration:
+          capacity: 200
+          max_db_size: 128
+          max_long_query: 3
+          max_long_tx: 30
+          max_clients: 20
+    mongodb:
+      free:
+        job_management:
+          high_water: 3000
+          low_water: 100
+        configuration:
+          allow_over_provisioning: true
+          capacity: 200
+          quota_files: 4
+          max_clients: 500
+    redis:
+      free:
+        job_management:
+          high_water: 1400
+          low_water: 100
+        configuration:
+          capacity: 200
+          max_memory: 16
+          max_swap: 32
+          max_clients: 500
+    rabbit:
+      free:
+        job_management:
+          low_water: 100
+          high_water: 1400
+        configuration:
+          max_memory_factor: 0.5
+          max_clients: 512
+          capacity: 200
+
+  serialization_data_server:
+    upload_token: 8f7COGvTlXT7l8IzAgOHxMXurBrG364k
+    use_nginx: true
+    upload_timeout: 10
+    port: 8080
+    upload_file_expire_time: 600
+    purge_expired_interval: 30
+
+  service_backup:
+    nfs_server:
+      address: 10.10.102.151
+      export_dir: /var/vcap/store/shared
+
+  service_migration:
+    nfs_server:
+      address: 10.10.102.151
+      export_dir: /var/vcap/store/shared
+
+  service_backup_manager:
+    enable: true
+
+  service_snapshot_manager:
+    enable: true
+
+  service_job_manager:
+    enable: true
+
+  mysql_gateway:
+    token: d8d7b640fea0666c28eaa93eccdc275e649b6d27
+    check_orphan_interval: 7200
+    supported_versions: ["5.1"]
+    version_aliases:
+      current: "5.1"
+  mysql_node:
+    production: true
+    supported_versions: ["5.1"]
+    default_version: "5.1"
+    password: zb213djkas
+
+  redis_gateway:
+    token: 401e721c8cba8c51d8bd4ca1b4e6597e7a527b40
+    check_orphan_interval: 7200
+    supported_versions: ["2.2", "2.4", "2.6"]
+    version_aliases:
+      current: "2.2"
+      next: "2.6"
+  redis_node:
+    command_rename_prefix: sample
+    supported_versions: ["2.2", "2.4", "2.6"]
+    default_version: "2.2"
+
+  mongodb_gateway:
+    token: 2a8fb923bc4c22750856914eea810607a221fead
+    check_orphan_interval: 7200
+    supported_versions: ["1.8", "2.0"]
+    version_aliases:
+      current: "2.0"
+      deprecated: "1.8"
+  mongodb_node:
+    supported_versions: ["1.8", "2.0"]
+    default_version: "1.8"
+
+  rabbit_gateway:
+    token: A00430A8BAED490B1240338DA34B10D
+    check_orphan_interval: 7200
+    supported_versions: ["2.4"]
+    version_aliases:
+      current: "2.4"
+  rabbit_node:
+    supported_versions: ["2.4"]
+    default_version: "2.4"
+
+  postgresql_gateway:
+    token: cqZeAh4BXFBXwLrrWJCpQTfeDnaCn7m
+    check_orphan_interval: 7200
+    supported_versions: ["9.0"]
+    version_aliases:
+      current: "9.0"
+  postgresql_node:
+    password: 13ec900a8cb24f09413cf1c1b3eb6eca
+    production: true
+    supported_versions: ["9.0"]
+    default_version: "9.0"
+
+  syslog_aggregator:
+    address: 10.10.102.152
+    port: 54321
+
+  stager:
+    max_staging_duration: 120
+    max_active_tasks: 20
+    queues:
+    - staging
+
+  login:
+    links:
+      home: https://portal.cf.test2
+      passwd: https://portal.cf.test2/password_resets/new
+      signup: https://portal.cf.test2/register
+
+  uaa:
+    catalina_opts: -Xmx768m -XX:MaxPermSize=256m
+    url: http://uaa.cf.test2
+    resource_id: account_manager
+    client_secret: somesecret
+    token_secret: tokensecret
+    cc:
+      token_secret: WGvbxaiC371JM
+      client_secret: fOZF5DMNDZIfCb9A
+    admin:
+      client_secret: MeM5fER8evgEisjj
+    login:
+      client_secret: HZtd2FyZS5jb20iL
+    batch:
+      username: do0H2AKay2jAc
+      password: FSCTiplI5Q83n
+    client:
+      override: true
+      autoapprove:
+        - vmc
+        - login
+    clients:
+      dashboard:
+        secret: YsLuKyUCZF53kBKS
+        scope: openid,dashboard.user
+        authorities: uaa.admin,uaa.resource,tokens.read,scim.read,scim.write
+        authorized-grant-types: client_credentials,authorization_code,refresh_token
+    scim:
+      users:
+      - b29|admin|openid,dashboard.user
